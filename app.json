@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "estudos-mobile",
-    "slug": "estudos-mobile",
+    "name": "check-plus",
+    "slug": "check-plus",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

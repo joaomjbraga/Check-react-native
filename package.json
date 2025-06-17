@@ -1,7 +1,11 @@
 {
-  "name": "estudos-mobile",
+  "name": "check-plus",
   "version": "1.0.0",
   "main": "index.ts",
+  "author": "João M J Braga <joomdeveloper.app@gmail.com>",
+  "description": "A simple app to check your health",
+  "license": "MIT",
+  "homepage": "https://docs.expo.dev",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
