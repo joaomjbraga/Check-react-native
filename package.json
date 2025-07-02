@@ -5,7 +5,7 @@
   "author": "João M J Braga <joomdeveloper.app@gmail.com>",
   "description": "A simple app to check your health",
   "license": "MIT",
-  "homepage": "https://joommobile.vercel.app/",
+  "homepage": "https://joaomjbraga.vercel.app/",
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
