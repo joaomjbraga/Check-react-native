@@ -2,6 +2,7 @@
   "expo": {
     "name": "check+",
     "slug": "check-plus",
+    "scheme": "check-plus",
     "version": "1.0.0",
     "backgroundColor": "#0a0a0a",
     "orientation": "portrait",
@@ -32,6 +33,7 @@
         "projectId": "1e4038e3-7686-4803-b99b-8ff494a4f816"
       }
     },
-    "owner": "joaomjbraga"
+    "owner": "joaomjbraga",
+    "plugins": ["expo-router"]
   }
 }

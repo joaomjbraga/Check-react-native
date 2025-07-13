@@ -9,13 +9,14 @@ import {
   Animated,
   Dimensions,
   Image,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { useState, useEffect, useRef } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { styles } from './styles';
-import Icone from '../../assets/icon.png'
 
 const { width } = Dimensions.get('window');
 
@@ -28,7 +29,6 @@ interface Tarefa {
 
 const TAREFAS_KEY = '@tarefas';
 
-// Componente animado para cada tarefa
 const TaskItem = ({ item, onToggle, onRemove }: { 
   item: Tarefa; 
   onToggle: (id: string) => void; 
@@ -145,14 +145,13 @@ const TaskItem = ({ item, onToggle, onRemove }: {
   );
 };
 
-export default function Home() {
+export default function Tarefas() {
   const [conteudo, setConteudo] = useState('');
   const [tarefas, setTarefas] = useState<Tarefa[]>([]);
   const [loading, setLoading] = useState(true);
   const headerAnim = useRef(new Animated.Value(0)).current;
   const formAnim = useRef(new Animated.Value(0)).current;
 
-  // Carrega as tarefas salvas no AsyncStorage
   useEffect(() => {
     const carregarTarefas = async () => {
       try {
@@ -170,7 +169,6 @@ export default function Home() {
     carregarTarefas();
   }, []);
 
-  // Animações de entrada
   useEffect(() => {
     if (!loading) {
       Animated.stagger(200, [
@@ -188,7 +186,6 @@ export default function Home() {
     }
   }, [loading]);
 
-  // Salva sempre que tarefas mudarem
   useEffect(() => {
     if (!loading) {
       const salvarTarefas = async () => {
@@ -248,107 +245,55 @@ export default function Home() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="dark" />
-
-      <Animated.View 
-        style={[
-          styles.header,
-          {
-            opacity: headerAnim,
-            transform: [
-              {
-                translateY: headerAnim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [-50, 0],
-                }),
-              },
-            ],
-          },
-        ]}
+      
+      <KeyboardAvoidingView 
+        style={styles.keyboardContainer}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
       >
-        <View style={styles.titleContainer}>
-          <Image source={require('../../assets/icon.png')} style={{width:60, height:60}}  />
-          <Text style={styles.title}>Cheke Plus</Text>
-        </View>
-        <Text style={styles.subtitle}>Organize suas tarefas com elegância</Text>
-        
-        <View style={styles.statsContainer}>
-          <View style={styles.statItem}>
-            <Text style={styles.statNumber}>{tarefasAtivas}</Text>
-            <Text style={styles.statLabel}>Ativas</Text>
-          </View>
-          <View style={styles.statDivider} />
-          <View style={styles.statItem}>
-            <Text style={styles.statNumber}>{tarefasConcluidas}</Text>
-            <Text style={styles.statLabel}>Concluídas</Text>
-          </View>
-          <View style={styles.statDivider} />
-          <View style={styles.statItem}>
-            <Text style={styles.statNumber}>{tarefas.length}</Text>
-            <Text style={styles.statLabel}>Total</Text>
-          </View>
-        </View>
-      </Animated.View>
-
-      <Animated.View 
-        style={[
-          styles.form,
-          {
-            opacity: formAnim,
-            transform: [
-              {
-                translateY: formAnim.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [30, 0],
-                }),
-              },
-            ],
-          },
-        ]}
-      >
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Digite sua nova tarefa..."
-            placeholderTextColor="#888"
-            onChangeText={setConteudo}
-            value={conteudo}
-            multiline
-            maxLength={150}
-          />
-          <View style={styles.inputFooter}>
-            <Text style={styles.charCount}>
-              {conteudo.length}/150
-            </Text>
-          </View>
-        </View>
-        
-        <TouchableOpacity
-          style={[styles.button, !conteudo.trim() && styles.buttonDisabled]}
-          onPress={adicionarTarefa}
-          disabled={!conteudo.trim()}
-          activeOpacity={0.8}
+        <Animated.View 
+          style={[
+            styles.header,
+            {
+              opacity: headerAnim,
+              transform: [
+                {
+                  translateY: headerAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [-50, 0],
+                  }),
+                },
+              ],
+            },
+          ]}
         >
-          <MaterialIcons 
-            name="add-circle-outline" 
-            size={24} 
-            color={conteudo.trim() ? '#ffffff' : '#666'} 
-          />
-          <Text style={[styles.buttonText, !conteudo.trim() && styles.buttonTextDisabled]}>
-            Adicionar Tarefa
-          </Text>
-        </TouchableOpacity>
-      </Animated.View>
+          <View style={styles.titleContainer}>
+            <Image source={require('../../../assets/icon.png')} style={{width: 48, height: 48}} />
+            <Text style={styles.title}>Tarefas</Text>
+          </View>
+          <Text style={styles.subtitle}>Organize suas tarefas com elegância</Text>
+          
+          <View style={styles.statsContainer}>
+            <View style={styles.statItem}>
+              <Text style={styles.statNumber}>{tarefasAtivas}</Text>
+              <Text style={styles.statLabel}>Ativas</Text>
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.statItem}>
+              <Text style={styles.statNumber}>{tarefasConcluidas}</Text>
+              <Text style={styles.statLabel}>Concluídas</Text>
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.statItem}>
+              <Text style={styles.statNumber}>{tarefas.length}</Text>
+              <Text style={styles.statLabel}>Total</Text>
+            </View>
+          </View>
+        </Animated.View>
 
-      {tarefas.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <MaterialIcons name="task-alt" size={80} color="#444" />
-          <Text style={styles.emptyText}>Nenhuma tarefa ainda</Text>
-          <Text style={styles.emptySubtext}>
-            Comece adicionando sua primeira tarefa acima
-          </Text>
-        </View>
-      ) : (
         <FlatList
+          style={styles.list}
+          contentContainerStyle={styles.listContent}
           data={tarefas}
           keyExtractor={item => item.id}
           renderItem={({ item }) => (
@@ -358,11 +303,69 @@ export default function Home() {
               onRemove={removerTarefa}
             />
           )}
-          style={styles.list}
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyText}>Nenhuma tarefa encontrada</Text>
+              <Text style={styles.emptySubtext}>
+                Adicione uma nova tarefa para começar a organizar seu dia!
+              </Text>
+            </View>
+          }
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.listContent}
         />
-      )}
+
+        <Animated.View 
+          style={[
+            styles.form,
+            {
+              opacity: formAnim,
+              transform: [
+                {
+                  translateY: formAnim.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [50, 0],
+                  }),
+                },
+              ],
+            },
+          ]}
+        >
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Digite sua nova tarefa..."
+              placeholderTextColor="#888"
+              onChangeText={setConteudo}
+              value={conteudo}
+              multiline
+              maxLength={150}
+              returnKeyType="done"
+              blurOnSubmit={true}
+            />
+            <View style={styles.inputFooter}>
+              <Text style={styles.charCount}>
+                {conteudo.length}/150
+              </Text>
+            </View>
+          </View>
+          
+          <TouchableOpacity
+            style={[styles.button, !conteudo.trim() && styles.buttonDisabled]}
+            onPress={adicionarTarefa}
+            disabled={!conteudo.trim()}
+            activeOpacity={0.8}
+          >
+            <MaterialIcons 
+              name="add-circle-outline" 
+              size={20} 
+              color={conteudo.trim() ? '#ffffff' : '#666'} 
+            />
+            <Text style={[styles.buttonText, !conteudo.trim() && styles.buttonTextDisabled]}>
+              Adicionar Tarefa
+            </Text>
+          </TouchableOpacity>
+        </Animated.View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
